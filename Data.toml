@@ -1,0 +1,97 @@
+data_config_version = 0
+uuid = "71b98f2b-7fdd-438d-a053-2a273cc7652e"
+name = "BipoSense"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[[biposense]]
+uuid = "fcc2fa7f-57f4-4043-9e19-18927aa873b4"
+description = "Baseline, (hypo)manic episodes, self-reported variables and latent constructs."
+
+    [[biposense.storage]]
+    driver = "filesystem"
+    checksum = "k12:88f1089f05a515b39b9275c2c3fc441e"
+    path = "data/BipoSense_corrected.csv"
+
+    [[biposense.loader]]
+    driver = "csv"
+    variables = ["Participant", "Date", "Day", "IsBaseline", "HoursAsleep", "TimeGotUp", "State"]
+
+[["biposense (ewma)"]]
+uuid = "0651d5cd-be8d-4f0b-b942-b59890518aef"
+description = "Exponentially Weighted Moving Averages and Lower/Upper Control Limits."
+
+    [["biposense (ewma)".loader]]
+    driver = "julia"
+    path = "scripts/calculate_ewma.jl"
+    type = "DataFrames.DataFrame"
+
+        ["biposense (ewma)".loader.arguments]
+        "data#biposense (merged)" = "📇DATASET<<biposense (merged)::DataFrames.DataFrame>>"
+        L = 2.536435
+        lambda = 0.15
+
+[["biposense (merged)"]]
+uuid = "c9cf8ecd-46e2-4ef0-9de1-efd3910f32ca"
+description = "Merged BipoSense data."
+
+    [["biposense (merged)".loader]]
+    driver = "julia"
+    path = "scripts/merge_biposense.jl"
+    type = "DataFrames.DataFrame"
+
+        ["biposense (merged)".loader.arguments]
+        "data#biposense" = "📇DATASET<<biposense::DataFrames.DataFrame>>"
+        "data#mobile sensing (aggregated)" = "📇DATASET<<mobile sensing (aggregated)::DataFrames.DataFrame>>"
+        "data#xs (clean)" = "📇DATASET<<xs (clean)::DataFrames.DataFrame>>"
+
+[["mobile sensing"]]
+uuid = "8ab5111c-f82d-4d9d-bf88-26d2f7ce7a69"
+description = "Mobile Sensing data downloaded from Movisens."
+
+    [["mobile sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:5c7942ed22efec7c21cfd323e99b3361"
+    path = "data/MovisensMobileSensing.zip"
+
+    [["mobile sensing".loader]]
+    driver = "zip"
+
+[["mobile sensing (aggregated)"]]
+uuid = "be9a91c4-cef3-4185-9292-b226726238ff"
+description = "Mobile sensing data aggregated at the daily level."
+
+    [["mobile sensing (aggregated)".loader]]
+    driver = "julia"
+    path = "scripts/aggregate_mobile_sensing.jl"
+    type = "DataFrames.DataFrame"
+
+        ["mobile sensing (aggregated)".loader.arguments]
+        "data#mobile sensing::Dict{String, IO}" = "📇DATASET<<mobile sensing::Dict{String,IO}>>"
+
+[[xs]]
+uuid = "e0879e71-45c9-4619-ba92-f83d67564260"
+description = "Form data downloaded from Movisens."
+
+    [[xs.storage]]
+    driver = "filesystem"
+    checksum = "k12:11d13fe9d32e005554df4a559715aa12"
+    path = "data/MovisensXS.csv"
+
+    [[xs.loader]]
+    driver = "csv"
+
+[["xs (clean)"]]
+uuid = "e35e1262-e9bf-4dd9-82fb-735a7ce4d973"
+description = "Cleaned XS data."
+
+    [["xs (clean)".loader]]
+    driver = "julia"
+    path = "scripts/clean_xs.jl"
+    type = "DataFrames.DataFrame"
+    variables = ["ID", "Date", "Mood"]
+
+        ["xs (clean)".loader.arguments]
+        "data#xs" = "📇DATASET<<xs::DataFrames.DataFrame>>"

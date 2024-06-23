@@ -1,0 +1,10 @@
+.vscode/
+.DS_Store
+
+# ignore all folders that contain data or plots
+data/
+plots/
+timestamps/
+
+# ignore secrets.jl, which contains an API key
+secrets.jl
