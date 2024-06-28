@@ -1,15 +1,15 @@
 include("../src/plot.jl")
 
 
-types = ["Overall", "Prodromal", "DepressionProdromal", "ManiaProdromal", "Depression", "Mania"]
+types = ["Overall", "Prodromal", "DepressionProdromal", "ManiaProdromal", "DepressionEpisode", "ManiaEpisode"]
 
 colors = [
-    "IncomingMissedCalls" => BLUE,
-    "MoodFixedLimits" => ORANGE,
-    "KilometersFast" => PURPLE,
-    "UniqueConversationPartners" => LIGHTBLUE,
-    "MinutesDisplayOn" => RED,
-    "MinutesPhoneInactive" => YELLOW,
+    "KilometersFast" => BLUE,
+    "IncomingMissedCalls" => ORANGE,
+    "UniqueConversationPartners" => PURPLE,
+    "MinutesDisplayOn" => LIGHTBLUE,
+    "MinutesPhoneInactive" => RED,
+    "MoodFixedLimits" => YELLOW,
     "Others" => GRAY
 ]
 
@@ -18,7 +18,7 @@ df_plot = @chain "data/BipoSense_Optimization.csv" begin
     stack("Sensitivity" .* types)
     rename(:variable => :SensitivityType, :value => :Value)
     transform(
-        :SensitivityType => ByRow(x -> x[12:end]),
+        :SensitivityType => ByRow(x -> x[12:end]), # remove "Sensitivity" from the column name
         :Variable => ByRow(x -> x in first.(colors) ? x : "Others");
         renamecols=false
     )
@@ -35,9 +35,11 @@ figure = draw(
     data(df_plot) *
     mapping(
         :Value => "Sensitivity", :Specificity;
-        layout=:SensitivityType => sorter(types), color=:Variable => sorter(first.(colors))
+        layout=:SensitivityType => renamer(types .=> collect('a':'f') .* ") " .* types),
+        color=:Variable => sorter(first.(colors))
     );
-    axis=(width=300, height=200), palettes=(layout=reshape([(y, x) for x in 1:2, y in 1:3], :), color=last.(colors))
+    axis=(width=300, height=200),
+    palettes=(layout=reshape([(y, x) for x in 1:2, y in 1:3], :), color=last.(colors))
 )
 
 save("plots/Sensitivity_Specificity.png", figure, px_per_unit=3)
