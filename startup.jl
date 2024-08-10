@@ -1,4 +1,4 @@
-using DataToolkit, DataFrames, Chain, ZipFile, ShiftedArrays, CSV, XML
+using DataToolkit, DataFrames, Chain, ZipFile, ShiftedArrays, CSV, XML, LocalPoly
 using Dates, Statistics
 
 

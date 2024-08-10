@@ -19,6 +19,18 @@ description = "Baseline, (hypo)manic episodes, self-reported variables and laten
     driver = "csv"
     variables = ["Participant", "Date", "Day", "IsBaseline", "HoursAsleep", "TimeGotUp", "State"]
 
+[["biposense (ar)"]]
+uuid = "a53b37d2-3108-41b4-bc01-c3c43dbe4ac6"
+description = "Autocorrelation."
+
+    [["biposense (ar)".loader]]
+    driver = "julia"
+    path = "scripts/calculate_ar.jl"
+    type = "DataFrames.DataFrame"
+
+        ["biposense (ar)".loader.arguments]
+        "data#biposense (merged)" = "📇DATASET<<biposense (merged)::DataFrames.DataFrame>>"
+
 [["biposense (ewma)"]]
 uuid = "0651d5cd-be8d-4f0b-b942-b59890518aef"
 description = "Exponentially Weighted Moving Averages and Lower/Upper Control Limits."

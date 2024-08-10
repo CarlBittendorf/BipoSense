@@ -141,3 +141,15 @@ function enumerate_phases(phase)
 
     return labels
 end
+
+
+function replace_phonecall_missings(variable)
+    # index of the last non-missing
+    # missings at the end occur when the app's permissions have been revoked
+    index = findlast(x -> !ismissing(x), variable)
+
+    # replace missings with zeros
+    cleaned = replace(variable[1:index], missing => 0)
+
+    return vcat(cleaned, repeat([missing], length(variable) - index))
+end

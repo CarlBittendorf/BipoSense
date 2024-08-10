@@ -2,18 +2,6 @@ function (; var"data#biposense (merged)", lambda=0.15, L=2.536435)
     λ = lambda
 
 
-    function replace_phonecall_missings(variable)
-        # index of the last non-missing
-        # missings at the end occur when the app's permissions have been revoked
-        index = findlast(x -> !ismissing(x), variable)
-
-        # replace missings with zeros
-        cleaned = replace(variable[1:index], missing => 0)
-
-        vcat(cleaned, repeat([missing], length(variable) - index))
-    end
-
-
     function ewma(variable, baseline, episode)
         baseline_start = findfirst(baseline)
 
