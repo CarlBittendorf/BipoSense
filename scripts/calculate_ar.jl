@@ -22,7 +22,7 @@ function (; var"data#biposense (merged)")
         values = repeat(Union{Missing,Float64}[missing], length(detrended))
 
         for i in 7:length(detrended)
-            # the current and previous days cannot be missing
+            # the current day and previous day cannot be missing
             if !any(ismissing, detrended[i-1:i])
                 start = max(1, i - 13)
                 x, y = collect.(skipmissings(detrended[start:i], lagged[start:i]))
@@ -38,13 +38,32 @@ function (; var"data#biposense (merged)")
     end
 
 
+    function variance(variable)
+        values = repeat(Union{Missing,Float64}[missing], length(variable))
+
+        for i in 7:length(variable)
+            start = max(1, i - 13)
+            x = collect(skipmissing(variable[start:i]))
+
+            # at least 7 non-missings are needed
+            if length(x) >= 7
+                values[i] = var(x)
+            end
+        end
+
+        return values
+    end
+
+
     pairs_ar = map(x -> [x, :Day], VARIABLES)
     names_ar = map(x -> Symbol(string(x) * "_AR"), VARIABLES)
+    names_var = map(x -> Symbol(string(x) * "_VAR"), VARIABLES)
 
     @chain var"data#biposense (merged)" begin
         sort([:Participant, :Day])
         groupby(:Participant)
         transform(PHONECALL_VARIABLES .=> replace_phonecall_missings; renamecols=false, ungroup=false)
         transform(pairs_ar .=> ar .=> names_ar)
+        transform(VARIABLES .=> variance .=> names_var)
     end
 end
