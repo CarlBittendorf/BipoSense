@@ -1,0 +1,53 @@
+data_config_version = 0
+uuid = "d4b37bec-0b2b-48b4-9fe1-4ae2c17720e2"
+name = "Unique Places"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "8f92bdea-d8a3-4e47-8b65-a81cfca89a49"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Ground Truth"]]
+uuid = "bec18cbb-c699-4718-99aa-6b0250db7295"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "2a882684-8694-4ffc-86a1-acdd6c66c4e4"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["BipoSense Unique Places"]]
+uuid = "9a28466a-40d5-42ee-b230-150ad1192e27"
+
+    [["BipoSense Unique Places".loader]]
+    driver = "julia"
+    path = "scripts/places.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Unique Places".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
