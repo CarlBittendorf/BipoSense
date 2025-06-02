@@ -22,7 +22,7 @@ In addition, data is visualized in a variety of ways, especially as time series 
 
 * *Data.toml*: This file, along with [DataToolkit.jl](https://github.com/tecosaur/DataToolkit.jl), is used to organize and manage our data and contains, among other things, descriptions, checksums and references to the code that was used to create the datasets.
 
-* *scripts*: Contains the specific code for processing data, fitting models, creating figures and so on.
+* *scripts*: Contains the specific code for processing data, fitting models, creating figures, and so on.
 
 ### Passive Sensing
 
@@ -39,6 +39,10 @@ We investigate whether exploratory behavior, operationalized via smart digital p
 ### Crowded Places
 
 Changes in preferred environments or spatial routines are core symptoms of bipolar disorder. We investigate whether impending episodes can be predicted by urban exposure (i.e., population density, surface imperviousness, busy public spaces, and green spaces).
+
+### Home Stay
+
+It is assumed that people tend to stay at home more during a depressive episode, while the opposite trend is observed during a manic episode. Therefore, we examine whether time spent at home and mean and maximum distances from home (both throughout the day and specifically at night) can serve as early warning signals.
 
 ## Acknowledgements
 

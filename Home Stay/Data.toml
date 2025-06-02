@@ -1,0 +1,65 @@
+data_config_version = 0
+uuid = "9300d2b0-0860-438c-bba3-2ea06930f892"
+name = "BipoSense Home Stay"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "77a82dff-ca80-4d8e-a43f-7e5bd2d22ee5"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Ground Truth"]]
+uuid = "2f3849ed-b2b9-42a6-9255-a235ed282439"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Home Stay"]]
+uuid = "5afac5e5-ab18-4425-8cd9-8a76f05d6a40"
+
+    [["BipoSense Home Stay".loader]]
+    driver = "julia"
+    path = "scripts/stay.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Home Stay".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+        "data#BipoSense Residential Locations" = "📇DATASET<<BipoSense Residential Locations::DataFrames.DataFrame>>"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "8636c6d8-7373-4b2d-bc72-f2c40de534b2"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["BipoSense Residential Locations"]]
+uuid = "08a99b42-02d0-48fc-a18f-01bf112c3926"
+
+    [["BipoSense Residential Locations".storage]]
+    driver = "filesystem"
+    checksum = "k12:48357dcf3a88cbc593d11067639b1875"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Residential Locations.csv"
+
+    [["BipoSense Residential Locations".loader]]
+    driver = "csv"
