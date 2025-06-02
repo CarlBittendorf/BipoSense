@@ -1,0 +1,12 @@
+[deps]
+AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
+AmbulatoryAssessmentAnalysis = "562e0ae9-293a-420f-a40f-ca28bb40a5c4"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+Chain = "8be319e6-bccf-4806-a6f7-6fae938471bc"
+Common = "32073bc9-f332-4340-a5ee-de7f7a68734c"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DataToolkit = "dc83c90b-d41d-4e55-bdb7-0fc919659999"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+KangarooTwelve = "2a5dabf5-6a39-42aa-818d-ce8a58d1b312"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"

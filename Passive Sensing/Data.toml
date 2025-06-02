@@ -1,0 +1,77 @@
+data_config_version = 0
+uuid = "f46516f5-f08b-4f62-940d-b264fe61195b"
+name = "Passive Sensing"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "b2e0e4b2-5717-4066-b4d2-598758e2b363"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Forms"]]
+uuid = "a5154690-316f-4161-99db-70a6457384aa"
+
+    [["BipoSense Forms".storage]]
+    driver = "filesystem"
+    checksum = "k12:e4e50ae0d228c033efdf46b20738f0f1"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Forms.arrow"
+
+    [["BipoSense Forms".loader]]
+    driver = "arrow"
+
+[["BipoSense Ground Truth"]]
+uuid = "e41b8598-d7bf-4e87-9c61-2bb594a4387c"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "4b6253df-e746-441f-8535-b3ccf2883b1e"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["BipoSense Passive Sensing"]]
+uuid = "b7c282a9-d754-4078-874b-628f35f037de"
+
+    [["BipoSense Passive Sensing".loader]]
+    driver = "julia"
+    path = "scripts/sensing.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Passive Sensing".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Forms" = "📇DATASET<<BipoSense Forms::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+        "data#BipoSense Sleep Variables" = "📇DATASET<<BipoSense Sleep Variables::DataFrames.DataFrame>>"
+
+[["BipoSense Sleep Variables"]]
+uuid = "8f6cdb23-5d54-4b0c-94e9-f9cb1e9e467a"
+
+    [["BipoSense Sleep Variables".storage]]
+    driver = "filesystem"
+    checksum = "k12:2f7a763eed7a743358d9e7062b21c11b"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Sleep Variables.csv"
+
+    [["BipoSense Sleep Variables".loader]]
+    driver = "csv"
