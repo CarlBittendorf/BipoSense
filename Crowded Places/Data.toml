@@ -1,0 +1,65 @@
+data_config_version = 0
+uuid = "9ebf022c-aa1c-4145-844c-89c75865edcd"
+name = "BipoSense Crowded Places"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "8208ce64-f100-4f33-bc3d-dd9b667ec55e"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Crowded Places"]]
+uuid = "38cf7457-4d21-4e25-bddd-00c1fc7c36ef"
+
+    [["BipoSense Crowded Places".loader]]
+    driver = "julia"
+    path = "scripts/places.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Crowded Places".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+        "data#Zensus 2011" = "📇DATASET<<Zensus 2011::DataFrames.DataFrame>>"
+
+[["BipoSense Ground Truth"]]
+uuid = "fd295346-de45-4f28-87f0-fd94dada17b4"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "7d1db666-fe51-4714-85a3-2db3a1594cf8"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["Zensus 2011"]]
+uuid = "aadf8e96-1b87-44a5-bbac-0af3c7aca648"
+
+    [["Zensus 2011".storage]]
+    driver = "filesystem"
+    checksum = "k12:f408880d620886965ec753d49df88d41"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/Zensus 2011.arrow"
+
+    [["Zensus 2011".loader]]
+    driver = "arrow"
