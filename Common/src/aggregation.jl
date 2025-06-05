@@ -95,7 +95,7 @@ function cluster_locations(
     end
 end
 
-function filter_clusters(df::DataFrame, period::Period; groupcols = [])
+function filter_clusters(df::DataFrame, period::Period; min_stay, groupcols = [])
     @chain df begin
         # remove entries classified as noise
         subset(:ClusterIndex => ByRow(!isequal(0)))
@@ -103,15 +103,15 @@ function filter_clusters(df::DataFrame, period::Period; groupcols = [])
         groupby_period(period; groupcols)
         transform(:ClusterIndex => enumerate_clusters => :ClusterEnumeration)
 
-        # remove clusters without a continuous length of stay of at least 10 minutes
+        # remove clusters without a continuous length of stay of a certain duration
         groupby_period(period; groupcols = [groupcols..., :ClusterEnumeration])
-        subset(:ClusterIndex => (x -> length(x) >= 10))
+        subset(:ClusterIndex => (x -> length(x) >= min_stay))
     end
 end
 
 function AmbulatoryAssessmentAnalysis.aggregate(
         df::DataFrame, ::Type{MovisensXSLocationClusters}, period::Period;
-        max_velocity, crs, radius, min_neighbors, groupcols = [])
+        max_velocity, crs, radius, min_neighbors, min_stay, groupcols = [])
     @chain df begin
         filter_locations(; max_velocity, groupcols)
 
@@ -122,7 +122,7 @@ function AmbulatoryAssessmentAnalysis.aggregate(
         transform([:Latitude, :Longitude] .=> fill_down; renamecols = false)
 
         cluster_locations(period; crs, radius, min_neighbors, groupcols)
-        filter_clusters(period; groupcols)
+        filter_clusters(period; min_stay, groupcols)
 
         groupby_period(period; groupcols)
         combine(

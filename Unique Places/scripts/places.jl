@@ -5,6 +5,7 @@ function (;
         max_velocity = 300,
         radius = 100,
         min_neighbors = 19,
+        min_stay = 10,
         λ = 0.15,
         L = 2.536435
 )
@@ -15,7 +16,8 @@ function (;
         dropmissing(:Participant)
 
         aggregate(MovisensXSLocationClusters, Day(1);
-            max_velocity, crs = utmnorth(32), radius, min_neighbors, groupcols = [:Participant])
+            max_velocity, crs = utmnorth(32), radius, min_neighbors,
+            min_stay, groupcols = [:Participant])
 
         transform(:DateTime => ByRow(Date) => :Date)
         select(Not(:DateTime))
