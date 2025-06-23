@@ -6,7 +6,6 @@ using Common
 
 include("src/utils.jl")
 
-VARIABLES = [
-    :MinutesRetailExposure, :MinutesRailwayExposure, :MinutesPedestrianExposure,
-    :MinutesMallExposure, :MinutesDepartmentStoreExposure,
-    :MinutesCrowdExposure, :MeanPopulationDensity, :MeanImperviousness]
+VARIABLES = [:MinutesRetailExposure, :MinutesRailwayExposure, :MinutesPedestrianExposure,
+    :MinutesMallExposure, :MinutesDepartmentStoreExposure, :MinutesCrowdExposure,
+    :MeanPopulationDensity, :MeanImperviousness, :MeanNDVI, :MeanGreenArea]

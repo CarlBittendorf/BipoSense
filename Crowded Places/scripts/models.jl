@@ -1,5 +1,9 @@
 include("../startup.jl")
 
+using AlgebraOfGraphics
+
+set_aog_theme!()
+
 spc_variables = add_suffixes(VARIABLES, ["OUT"])
 dst_variables = add_suffixes(VARIABLES, ["AR", "LNVAR", "AVG"])
 
@@ -26,8 +30,8 @@ models = fit_logit_models(df, variables)
 
 analyze_models("models/Models.pdf", models; header)
 
-draw_roc("figures/roc", df, models[9:24, :])
+draw_roc("figures/roc", df, models[11:40, :])
 
-aucs = map(x -> ismissing(x) ? x : auc(df, x), models[9:24, :])
+aucs = map(x -> ismissing(x) ? x : auc(df, x), models[11:40, :])
 
-save_table("models/Models AUC.pdf", header, hcat(variables[9:24], aucs), "AUCs")
+save_table("models/Models AUC.pdf", header, hcat(variables[11:40], aucs), "AUCs")

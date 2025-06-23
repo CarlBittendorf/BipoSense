@@ -30,6 +30,20 @@ uuid = "38cf7457-4d21-4e25-bddd-00c1fc7c36ef"
         "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
         "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
         "data#Zensus 2011" = "📇DATASET<<Zensus 2011::DataFrames.DataFrame>>"
+        "data#BipoSense Locations" = "📇DATASET<<BipoSense Locations::DataFrames.DataFrame>>"
+        "data#BipoSense Mean NDVI" = "📇DATASET<<BipoSense Mean NDVI::DataFrames.DataFrame>>"
+        "data#BipoSense Green Area" = "📇DATASET<<BipoSense Green Area::DataFrames.DataFrame>>"
+
+[["BipoSense Green Area"]]
+uuid = "3949e1f8-9879-48d3-8098-1c22633b4d6c"
+
+    [["BipoSense Green Area".storage]]
+    driver = "filesystem"
+    checksum = "k12:3d505ea2e654ade135dd4bf18644b5b2"
+    path = "data/Green Area.csv"
+
+    [["BipoSense Green Area".loader]]
+    driver = "csv"
 
 [["BipoSense Ground Truth"]]
 uuid = "fd295346-de45-4f28-87f0-fd94dada17b4"
@@ -40,6 +54,29 @@ uuid = "fd295346-de45-4f28-87f0-fd94dada17b4"
     path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
 
     [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Locations"]]
+uuid = "9054e9f9-1ffd-4e6b-90ac-e21e49860c47"
+
+    [["BipoSense Locations".loader]]
+    driver = "julia"
+    path = "scripts/locations.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Locations".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+
+[["BipoSense Mean NDVI"]]
+uuid = "43f5545d-1f2f-4099-b27e-d7b414a3d868"
+
+    [["BipoSense Mean NDVI".storage]]
+    driver = "filesystem"
+    checksum = "k12:6012b19021969e56a654f99af163b29d"
+    path = "data/Mean NDVI.csv"
+
+    [["BipoSense Mean NDVI".loader]]
     driver = "csv"
 
 [["BipoSense Mobile Sensing"]]

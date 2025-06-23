@@ -3,6 +3,9 @@ function (;
         var"data#BipoSense Assignments",
         var"data#BipoSense Ground Truth",
         var"data#Zensus 2011",
+        var"data#BipoSense Locations",
+        var"data#BipoSense Mean NDVI",
+        var"data#BipoSense Green Area",
         max_velocity = 300,
         λ = 0.15,
         L = 2.536435
@@ -36,6 +39,18 @@ function (;
         gmtread(; img = true)
         getproperty(:image)
         transpose
+    end
+
+    df_green_spaces = @chain var"data#BipoSense Locations" begin
+        groupby([:Latitude, :Longitude])
+        combine(All() .=> first)
+
+        select([:Latitude, :Longitude])
+
+        transform(
+            All() => ((x...) -> var"data#BipoSense Mean NDVI".mean) => :MeanNDVI,
+            All() => ((x...) -> var"data#BipoSense Green Area".sum) => :GreenArea
+        )
     end
 
     @chain var"data#BipoSense Mobile Sensing" begin
@@ -80,15 +95,19 @@ function (;
         transform([:RowIndex, :ColIndex] => get_grid_values(imperviousness_grid) => :Imperviousness)
         transform(:Imperviousness => ByRow(x -> x > 100 ? missing : x); renamecols = false)
 
+        # Sentinel-2
+        leftjoin(df_green_spaces; on = [:Latitude, :Longitude])
+
         # fill missing timestamps
-        select(
-            :Participant, :DateTime, :RetailExposure, :RailwayExposure, :PedestrianExposure,
-            :MallExposure, :DepartmentStoreExposure, :Inhabitants, :Imperviousness)
+        select(:Participant, :DateTime, :RetailExposure, :RailwayExposure,
+            :PedestrianExposure, :MallExposure, :DepartmentStoreExposure,
+            :Inhabitants, :Imperviousness, :MeanNDVI, :GreenArea)
         fill_periods(Day(1), Minute(1); groupcols = [:Participant])
         groupby(:Participant)
         transform(
-            [:RetailExposure, :RailwayExposure, :PedestrianExposure, :MallExposure,
-                :DepartmentStoreExposure, :Inhabitants, :Imperviousness] .=> fill_down;
+            [:RetailExposure, :RailwayExposure, :PedestrianExposure,
+                :MallExposure, :DepartmentStoreExposure, :Inhabitants,
+                :Imperviousness, :MeanNDVI, :GreenArea] .=> fill_down;
             renamecols = false
         )
 
@@ -103,8 +122,10 @@ function (;
             :MallExposure => count => :MinutesMallExposure,
             :DepartmentStoreExposure => count => :MinutesDepartmentStoreExposure,
             :CrowdExposure => count => :MinutesCrowdExposure,
-            :Inhabitants => (x -> mean(skipmissing(x))) => :MeanPopulationDensity,
-            :Imperviousness => (x -> mean(skipmissing(x))) => :MeanImperviousness
+            :Inhabitants => mean ∘ skipmissing => :MeanPopulationDensity,
+            :Imperviousness => mean ∘ skipmissing => :MeanImperviousness,
+            :MeanNDVI => mean ∘ skipmissing => :MeanNDVI,
+            :GreenArea => mean ∘ skipmissing => :MeanGreenArea
         )
 
         transform(:DateTime => ByRow(Date) => :Date)
