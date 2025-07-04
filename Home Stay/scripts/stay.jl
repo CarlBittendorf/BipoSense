@@ -26,6 +26,7 @@ function (;
         transform(:MovisensXSParticipantID => ByRow(x -> parse(Int, x)); renamecols = false)
         leftjoin(var"data#BipoSense Assignments"; on = :MovisensXSParticipantID)
         dropmissing(:Participant)
+        sort([:Participant, :DateTime])
 
         filter_locations(; max_velocity, groupcols = [:Participant])
 
