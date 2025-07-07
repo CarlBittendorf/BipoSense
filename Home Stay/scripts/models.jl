@@ -24,7 +24,10 @@ header = ["", "DEP", "DLP", "DFW", "DSW", "DOW", "MEP", "MLP", "MFW", "MSW"]
 
 models = fit_logit_models(df, variables)
 
-analyze_models("models/Models.pdf", models; header)
+subsets = [[1:6, 1:5], [1:6, 6:9], [7:12, 1:5], [7:12, 6:9], [13:18, 1:5],
+    [13:18, 6:9], [19:24, 1:5], [19:24, 6:9], [25:30, 1:5], [25:30, 6:9]]
+
+analyze_models("models/Models.pdf", models; subsets, header)
 
 draw_roc("figures/roc", df, models[7:30, :])
 
