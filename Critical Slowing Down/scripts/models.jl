@@ -134,3 +134,13 @@ variables = add_suffixes(VARIABLES, ["AR", "LNVAR", "AVG"])
 models = fit_logit_models(df, variables; phases)
 
 analyze_models("models/Super-Euthymic Models.pdf", models; subsets)
+
+phases = ["DepressionFirstWeek", "DepressionSecondWeek", "DepressionOngoingWeeks",
+    "ManiaFirstWeek", "ManiaSecondWeek"]
+
+models = fit_logit_models(df, variables; phases)
+
+# adjust p values for depression and mania, as well as for autocorrelation, variance and average separately
+subsets = [[1:20, 1:3], [1:20, 4:5], [21:40, 1:3], [21:40, 4:5], [41:60, 1:3], [41:60, 4:5]]
+
+analyze_models("models/Episode Models.pdf", models; subsets)
