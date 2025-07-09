@@ -47,3 +47,5 @@ It is assumed that people tend to stay at home more during a depressive episode,
 ## Acknowledgements
 
 Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – GRK2739/1 – Project Nr. 447089431 – Research Training Group: KD²School – Designing Adaptive Systems for Economic Decisions
+
+Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – CRC393 – Project Nr. 521379614 – Trajectories of Affective Disorders: Cognitive-emotional Mechanisms of Symptom Change
