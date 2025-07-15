@@ -71,7 +71,7 @@ _get_p_values(models) = map(_get_p_value, models)
 
 function _get_adjusted_p_values(models, adjustment, subsets = [axes(models)])
     p_values = _get_p_values(models)
-    println(size(p_values))
+
     for subset in subsets
         p_values[subset...] = @chain p_values[subset...] begin
             replace(missing => 1.0)
@@ -217,9 +217,14 @@ function save_tables(print_tables::Function, filename::AbstractString)
 end
 
 function save_table(filename::AbstractString, header, cells, caption, pvalues = false)
-    save_tables(filename) do io
-        print_table(io, header, cells, pvalues)
-        println(io, "\n: " * caption * "\n")
+    if endswith(filename, ".pdf")
+        save_tables(filename) do io
+            print_table(io, header, cells, pvalues)
+            println(io, "\n: " * caption * "\n")
+        end
+
+    elseif endswith(filename, ".csv")
+        CSV.write(filename, DataFrame(process_cell.(cells; pvalue = pvalues), header))
     end
 end
 
@@ -231,20 +236,39 @@ function analyze_models(
         header = ["", _outcomes(models)...],
         odds_ratios = true
 )
-    save_tables(filename) do io
-        print_table(io, header, hcat(variables, _get_p_values(models)), true)
-        println(io, "\n: " * "p values" * "\n")
+    if endswith(filename, ".pdf")
+        save_tables(filename) do io
+            print_table(io, header, hcat(variables, _get_p_values(models)), true)
+            println(io, "\n: " * "p values" * "\n")
 
-        print_table(io, header,
-            hcat(variables, _get_adjusted_p_values(models, adjustment, subsets)), true)
-        println(io, "\n: " * "Bonferroni-Holm adjusted p values" * "\n")
+            print_table(io, header,
+                hcat(variables, _get_adjusted_p_values(models, adjustment, subsets)), true)
+            println(io, "\n: " * "Bonferroni-Holm adjusted p values" * "\n")
 
-        if odds_ratios
-            print_table(io, header, hcat(variables, _get_odds_ratios(models)))
-            println(io, "\n: " * "Odds ratios" * "\n")
+            if odds_ratios
+                print_table(io, header, hcat(variables, _get_odds_ratios(models)))
+                println(io, "\n: " * "Odds ratios" * "\n")
+            end
+
+            print_table(io, header, hcat(variables, _get_betas(models)))
+            println(io, "\n: " * "Coefficients" * "\n")
         end
 
-        print_table(io, header, hcat(variables, _get_betas(models)))
-        println(io, "\n: " * "Coefficients" * "\n")
+    elseif endswith(filename, ".csv")
+        save_table(filename[1:(end - 4)] * " (p values).csv", header,
+            hcat(variables, _get_p_values(models)), nothing, true)
+
+        save_table(
+            filename[1:(end - 4)] * " (Bonferroni-Holm adjusted p values).csv", header,
+            hcat(variables, _get_adjusted_p_values(models, adjustment, subsets)),
+            nothing, true)
+
+        if odds_ratios
+            save_table(filename[1:(end - 4)] * " (Odds ratios).csv", header,
+                hcat(variables, _get_odds_ratios(models)), nothing)
+        end
+
+        save_table(filename[1:(end - 4)] * " (Coefficients).csv",
+            header, hcat(variables, _get_betas(models)), nothing)
     end
 end

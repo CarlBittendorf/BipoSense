@@ -1,6 +1,6 @@
 module Common
 
-using AmbulatoryAssessmentAnalysis, Chain, DataFrames, GeoStats, Distances, Clustering,
+using AmbulatoryAssessmentAnalysis, Chain, DataFrames, CSV, GeoStats, Distances, Clustering,
       LocalPoly, ShiftedArrays, MixedModels, StatsModels, Distributions,
       StatisticalMeasures, PrettyTables, AlgebraOfGraphics, CairoMakie, GeometryBasics,
       Colors
