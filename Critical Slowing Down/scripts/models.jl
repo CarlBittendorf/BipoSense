@@ -21,6 +21,13 @@ models = fit_logit_models(df, variables; phases)
 subsets = [[1:20, 1:2], [1:20, 3:4], [21:40, 1:2], [21:40, 3:4], [41:60, 1:2], [41:60, 3:4]]
 
 analyze_models("models/Models.pdf", models; subsets)
+analyze_models("models/Models.csv", models; subsets)
+
+# adjust p values for depression and mania separately
+subsets = [[1:60, 1:2], [1:60, 3:4]]
+
+analyze_models("models/Models Appendix.pdf", models; subsets)
+analyze_models("models/Models Appendix.csv", models; subsets)
 
 draw_roc("figures/roc", df, models)
 
@@ -28,6 +35,7 @@ aucs = map(x -> ismissing(x) ? x : auc(df, x), models)
 header = ["", phases...]
 
 save_table("models/Models AUC.pdf", header, hcat(variables, aucs), "AUCs")
+save_table("models/Models AUC.csv", header, hcat(variables, aucs), nothing)
 
 df_roc = vcat((
     begin
