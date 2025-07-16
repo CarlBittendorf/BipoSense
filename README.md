@@ -1,4 +1,6 @@
-# BipoSense
+<div align="center">
+    <img alt="BipoSense Logo" src="BipoSense Logo.png" height=400>
+</div>
 
 ## Introduction
 
