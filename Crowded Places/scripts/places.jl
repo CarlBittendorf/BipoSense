@@ -138,7 +138,27 @@ function (;
         )
         sort([:Participant, :Date])
 
-        statistical_process_control(VARIABLES; λ, L)
+        # set the value range of the variables to 0 to 100
+        transform(
+            :MeanPopulationDensity => ByRow(x -> x / maximum(df_zensus.Inhabitants) * 100),
+            :MeanNDVI => ByRow(x -> (x + 1) * 50),
+            :MeanGreenArea => ByRow(x -> x / (pi * 100));
+            renamecols = false
+        )
+
+        # center variables within-subject
+        groupby(:Participant)
+        transform(
+            [:MeanPopulationDensity, :MeanImperviousness, :MeanNDVI, :MeanGreenArea] .=>
+                (x -> x .- mean(skipmissing(x)));
+            renamecols = false
+        )
+
+        statistical_process_control(
+            [:MinutesRetailExposure, :MinutesRailwayExposure, :MinutesPedestrianExposure,
+                :MinutesMallExposure, :MinutesDepartmentStoreExposure, :MinutesCrowdExposure];
+            λ, L
+        )
         dynamical_systems_theory(VARIABLES)
     end
 end

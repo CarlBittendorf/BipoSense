@@ -4,34 +4,35 @@ using AlgebraOfGraphics
 
 set_aog_theme!()
 
-spc_variables = add_suffixes(VARIABLES, ["OUT"])
-dst_variables = add_suffixes(VARIABLES, ["AR", "LNVAR", "AVG"])
-
 df = @chain d"BipoSense Crowded Places" begin
     groupby(:Participant)
-    transform(
-        :State => determine_baseline => :Baseline,
-        :Date => enumerate_days => :Day
-    )
+    transform(:Date => enumerate_days => :Day)
 
-    # remove the baseline as the algorithm was "trained" on it
-    transform(
-        map(x -> [x, :Baseline], spc_variables) .=>
-            ByRow((x, b) -> b ? missing : x) .=> spc_variables,
-        map(x -> [x, :Day], dst_variables) .=>
-            ByRow((x, d) -> d <= 14 ? missing : x) .=> dst_variables
-    )
+    subset(:Day => ByRow(x -> x > 14))
 end
 
-variables = add_suffixes(VARIABLES, ["OUT", "AR", "LNVAR", "AVG"])
-header = ["", "DEP", "DLP", "DFW", "DSW", "DOW", "MEP", "MLP", "MFW", "MSW"]
+variables = add_suffixes(
+    [:MeanPopulationDensity, :MeanImperviousness, :MeanNDVI, :MeanGreenArea],
+    ["LNVAR", "AVG"]
+)
+
+header_depression = ["", "DEP", "DLP", "DFW", "DSW", "DOW"]
+header_mania = ["", "MEP", "MLP", "MFW", "MSW"]
 
 models = fit_logit_models(df, variables)
 
-analyze_models("models/Models.pdf", models; header)
+analyze_models(
+    "models/Models NatureExposure Depression.pdf", models[:, 1:5]; header = header_depression)
+analyze_models(
+    "models/Models NatureExposure Depression.csv", models[:, 1:5]; header = header_depression)
+analyze_models(
+    "models/Models NatureExposure Mania.pdf", models[:, 6:9]; header = header_mania)
+analyze_models(
+    "models/Models NatureExposure Mania.csv", models[:, 6:9]; header = header_mania)
 
-draw_roc("figures/roc", df, models[11:40, :])
+draw_roc("figures/roc", df, models)
 
-aucs = map(x -> ismissing(x) ? x : auc(df, x), models[11:40, :])
+aucs = map(x -> ismissing(x) ? x : auc(df, x), models)
+header = ["", "DEP", "DLP", "DFW", "DSW", "DOW", "MEP", "MLP", "MFW", "MSW"]
 
-save_table("models/Models AUC.pdf", header, hcat(variables[11:40], aucs), "AUCs")
+save_table("models/Models NatureExposure AUC.pdf", header, hcat(variables, aucs), "AUCs")
