@@ -30,6 +30,8 @@ In addition, data is visualized in a variety of ways, especially as time series 
 
 Passive data collection via smartphone offers a promising opportunity to capture changes in activity, communication, or sleep. We investigate the potential of statistical process control to detect these changes and thus predict upcoming affective episodes.
 
+* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Guth, M., Mühlbauer, E., Hartnagel, L.-M., Severus, W. E., Bauer, M., Ritter, P., & Ebner-Priemer, U. W. (2025). Predicting depressive and manic episodes in patients with bipolar disorder using statistical process control methods on passive sensing data. *Journal of Psychopathology and Clinical Science.* Advance online publication. https://dx.doi.org/10.1037/abn0001002
+
 ### Critical Slowing Down
 
 Dynamic systems theory predicts a so-called "critical slowdown" before a phase transition, in which the system becomes more sensitive to stimuli, manifesting as stronger autocorrelation and variance. Here, we investigate whether this phenomenon precedes depressive and (hypo)manic episodes using smartphone-based digital phenotyping.
