@@ -36,6 +36,8 @@ Passive data collection via smartphone offers a promising opportunity to capture
 
 Dynamic systems theory predicts a so-called "critical slowdown" before a phase transition, in which the system becomes more sensitive to stimuli, manifesting as stronger autocorrelation and variance. Here, we investigate whether this phenomenon precedes depressive and (hypo)manic episodes using smartphone-based digital phenotyping.
 
+* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Neubauer, A., Mennigen, E., Mühlbauer, E., Severus, W. E., Bauer, M., & Ebner-Priemer, U. W. (2025). Early warning signs of bipolar relapse: Investigating critical slowing down in smartphone data. *Journal of Affective Disorders.* Journal Pre-proof. https://doi.org/10.1016/j.jad.2025.119972
+
 ### Unique Places
 
 We investigate whether exploratory behavior, operationalized via smart digital phenotypes (unique places visited, frequency of location changes, time spent at each location), can predict emerging episodes.
