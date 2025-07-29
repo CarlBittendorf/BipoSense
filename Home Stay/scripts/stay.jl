@@ -14,6 +14,9 @@ function (;
         :Longitude => :HomeLongitude
     )
 
+    # select values between 07:00 and 22:00
+    filter_day(x, t) = x[(t .>= Time(7)) .& (t .<= Time(22))]
+
     # select values between 22:00 and 05:00
     filter_night(x, t) = x[(t .<= Time(5)) .| (t .>= Time(22))]
 
@@ -48,14 +51,17 @@ function (;
             :Distance => mean => :MeanDistanceFromHome,
             :Distance => maximum => :MaxDistanceFromHome,
             :Distance => (x -> mean(x .<= radius)) => :FractionAtHome,
+            [:Distance, :Time] => ((x, t) -> mean(filter_day(x, t) .<= radius)) => :FractionAtHomeDay,
             [:Distance, :Time] => ((x, t) -> mean(filter_night(x, t))) => :MeanDistanceFromHomeNight,
             [:Distance, :Time] => ((x, t) -> maximum(filter_night(x, t))) => :MaxDistanceFromHomeNight,
             [:Distance, :Time] => ((x, t) -> mean(filter_night(x, t) .<= radius)) => :FractionAtHomeNight
         )
         transform(
             [:MeanDistanceFromHome, :MaxDistanceFromHome,
-                :MeanDistanceFromHomeNight, :MaxDistanceFromHomeNight] .=>
-                (x -> x ./ 1000); renamecols = false)
+                :MeanDistanceFromHomeNight, :MaxDistanceFromHomeNight] .=> (x -> x ./ 1000),
+            [:FractionAtHome, :FractionAtHomeDay, :FractionAtHomeNight] .=> (x -> x .* 100);
+            renamecols = false
+        )
 
         transform(:DateTime => ByRow(Date) => :Date)
         select(Not(:DateTime))

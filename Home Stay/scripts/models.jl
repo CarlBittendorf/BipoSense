@@ -24,13 +24,14 @@ header = ["", "DEP", "DLP", "DFW", "DSW", "DOW", "MEP", "MLP", "MFW", "MSW"]
 
 models = fit_logit_models(df, variables)
 
-subsets = [[1:6, 1:5], [1:6, 6:9], [7:12, 1:5], [7:12, 6:9], [13:18, 1:5],
-    [13:18, 6:9], [19:24, 1:5], [19:24, 6:9], [25:30, 1:5], [25:30, 6:9]]
+subsets = [[1:7, 1:5], [1:7, 6:9], [8:14, 1:5], [8:14, 6:9], [15:21, 1:5],
+    [15:21, 6:9], [22:28, 1:5], [22:28, 6:9], [29:35, 1:5], [29:35, 6:9]]
 
 analyze_models("models/Models.pdf", models; subsets, header)
+analyze_models("models/Models.csv", models; subsets, header)
 
-draw_roc("figures/roc", df, models[7:30, :])
+draw_roc("figures/roc", df, models[8:35, :])
 
-aucs = map(x -> ismissing(x) ? x : auc(df, x), models[7:30, :])
+aucs = map(x -> ismissing(x) ? x : auc(df, x), models[8:35, :])
 
-save_table("models/Models AUC.pdf", header, hcat(variables[7:30, :], aucs), "AUCs")
+save_table("models/Models AUC.pdf", header, hcat(variables[8:35, :], aucs), "AUCs")
