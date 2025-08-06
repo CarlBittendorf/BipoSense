@@ -22,7 +22,8 @@ function (;
 
     distance(x, y, u, v) = haversine([x, y], [u, v])
 
-    names_avg7 = map(x -> Symbol.(x * "AVG7"), string.(VARIABLES))
+    names_avg7 = add_suffixes(VARIABLES, ["AVG7"])
+    names_var = add_suffixes(VARIABLES, ["VAR"])
 
     @chain var"data#BipoSense Mobile Sensing" begin
         gather(MovisensXSLocation; callback = correct_timestamps)
@@ -75,6 +76,9 @@ function (;
 
         statistical_process_control(VARIABLES; λ, L)
         dynamical_systems_theory(VARIABLES)
-        transform(VARIABLES .=> (x -> rolling(mean, x; n = 7, min_n = 4)) .=> names_avg7)
+        transform(
+            VARIABLES .=> (x -> rolling(mean, x; n = 7, min_n = 4)) .=> names_avg7,
+            VARIABLES .=> (x -> rolling(var, x; n = 14, min_n = 7)) .=> names_var
+        )
     end
 end
