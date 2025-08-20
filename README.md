@@ -18,7 +18,9 @@ Generally, each folder in this repository corresponds to a project or article. T
 
 3. *Evaluation*, for example, through generalized linear mixed-effects models (including correction for multiple testing, automatic generation of model tables), statistical measures (sensitivity, specificity, etc.), ROC curves, and so on.
 
-In addition, data is visualized in a variety of ways, especially as time series with plotted episodes. Each project contains the following files and folders:
+In addition, data is visualized in a variety of ways, especially as time series with plotted episodes.
+
+Each project contains the following files and folders:
 
 * *Project.toml* and *Manifest.toml*: These two files list the required Julia packages, their dependencies and the versions used in this project.
 
@@ -30,13 +32,13 @@ In addition, data is visualized in a variety of ways, especially as time series 
 
 Passive data collection via smartphone offers a promising opportunity to capture changes in activity, communication, or sleep. We investigate the potential of statistical process control to detect these changes and thus predict upcoming affective episodes.
 
-* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Guth, M., Mühlbauer, E., Hartnagel, L.-M., Severus, W. E., Bauer, M., Ritter, P., & Ebner-Priemer, U. W. (2025). Predicting depressive and manic episodes in patients with bipolar disorder using statistical process control methods on passive sensing data. *Journal of Psychopathology and Clinical Science.* Advance online publication. https://dx.doi.org/10.1037/abn0001002
+* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Guth, M., Mühlbauer, E., Hartnagel, L.-M., Severus, W. E., Bauer, M., Ritter, P., & Ebner-Priemer, U. W. (2025). Predicting depressive and manic episodes in patients with bipolar disorder using statistical process control methods on passive sensing data. *Journal of Psychopathology and Clinical Science.* https://dx.doi.org/10.1037/abn0001002
 
 ### Critical Slowing Down
 
 Dynamic systems theory predicts a so-called "critical slowdown" before a phase transition, in which the system becomes more sensitive to stimuli, manifesting as stronger autocorrelation and variance. Here, we investigate whether this phenomenon precedes depressive and (hypo)manic episodes using smartphone-based digital phenotyping.
 
-* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Neubauer, A., Mennigen, E., Mühlbauer, E., Severus, W. E., Bauer, M., & Ebner-Priemer, U. W. (2025). Early warning signs of bipolar relapse: Investigating critical slowing down in smartphone data. *Journal of Affective Disorders.* Journal Pre-proof. https://doi.org/10.1016/j.jad.2025.119972
+* Ludwig, V. M., Bittendorf, C. A., Reinhard, I., Neubauer, A., Mennigen, E., Mühlbauer, E., Severus, W. E., Bauer, M., & Ebner-Priemer, U. W. (2025). Early warning signs of bipolar relapse: Investigating critical slowing down in smartphone data. *Journal of Affective Disorders*, 119972. https://doi.org/10.1016/j.jad.2025.119972
 
 ### Unique Places
 
@@ -44,7 +46,7 @@ We investigate whether exploratory behavior, operationalized via smart digital p
 
 ### Crowded Places
 
-Changes in preferred environments or spatial routines are core symptoms of bipolar disorder. We investigate whether impending episodes can be predicted by urban exposure (i.e., population density, surface imperviousness, busy public spaces, and green spaces).
+Changes in preferred environments or spatial routines are core symptoms of bipolar disorder. We investigate whether impending episodes can be predicted by urban exposure (i.e., population density, surface imperviousness, busy public spaces, and green spaces) using population surveys, satellite, and OpenStreetMap data.
 
 ### Home Stay
 
