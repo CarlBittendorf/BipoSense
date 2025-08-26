@@ -13,17 +13,30 @@ export fit_logit_models, print_table, save_tables, save_table, analyze_models
 # HELPER FUNCTIONS
 ####################################################################################################
 
-_predictor(model) = ismissing(model) ? missing : string(model.formula.rhs[1].terms[2])
+function _to_matrix(X)
+    [!ismissing(X[i, j]) && length(X[i, j]) >= k ? X[i, j][k] : missing
+     for i in axes(X, 1), j in axes(X, 2), k in 1:maximum(length.(X))]
+end
 
-function _predictors(models)
-    variables = repeat([""], size(models, 1))
+_predictors(model) = ismissing(model) ? [] : string.(model.formula.rhs[1].terms)
 
-    for i in axes(models, 1)
-        for j in axes(models, 2)
-            if !ismissing(models[i, j])
-                variables[i] = _predictor(models[i, j])
+function _predictors(models::Matrix)
+    predictors = @chain models begin
+        map(_predictors, _)
+        _to_matrix
+        replace("1" => "(Intercept)")
+    end
 
-                break
+    variables = [repeat([""], size(predictors, 1)) for _ in axes(predictors, 3)]
+
+    for k in axes(predictors, 3)
+        for i in axes(predictors, 1)
+            for j in axes(predictors, 2)
+                if !ismissing(predictors[i, j, k])
+                    variables[k][i] = predictors[i, j, k]
+
+                    break
+                end
             end
         end
     end
@@ -57,33 +70,42 @@ function _p_values(model)
     return ccdf.(Chisq(1), abs2.(z))
 end
 
-_get_beta(model) = ismissing(model) ? missing : last(coef(model))
+_get_betas(model) = ismissing(model) ? [] : coef(model)
 
-_get_betas(models) = map(_get_beta, models)
+_get_betas(models::Matrix) = _to_matrix(map(_get_betas, models))
 
-_get_odds_ratio(model) = ismissing(model) ? missing : exp(last(coef(model)))
+_get_odds_ratios(model) = ismissing(model) ? [] : [missing, exp.(coef(model)[2:end])...]
 
-_get_odds_ratios(models) = map(_get_odds_ratio, models)
+_get_odds_ratios(models::Matrix) = _to_matrix(map(_get_odds_ratios, models))
 
-_get_p_value(model) = ismissing(model) ? missing : last(_p_values(model))
+_get_p_values(model) = ismissing(model) ? [] : _p_values(model)
 
-_get_p_values(models) = map(_get_p_value, models)
+_get_p_values(models::Matrix) = _to_matrix(map(_get_p_values, models))
 
-function _get_adjusted_p_values(models, adjustment, subsets = [axes(models)])
-    p_values = _get_p_values(models)
+function _get_adjusted_p_values(
+        p_values, adjustment;
+        subsets = [[axes(p_values, 1), axes(p_values, 2), k] for k in axes(p_values, 3)]
+)
+    results = copy(p_values)
 
-    for subset in subsets
-        p_values[subset...] = @chain p_values[subset...] begin
+    if all(x -> length(x) == 2, subsets)
+        slices = map(x -> [x..., 2], subsets)
+    else
+        slices = subsets
+    end
+
+    for slice in slices
+        results[slice...] = @chain p_values[slice...] begin
             replace(missing => 1.0)
             reshape(:)
             PValues
             adjust(adjustment)
-            reshape(size(p_values[subset...]))
-            map((x, y) -> ismissing(x) ? missing : y, p_values[subset...], _)
+            reshape(size(p_values[slice...]))
+            map((x, y) -> ismissing(x) ? missing : y, p_values[slice...], _)
         end
     end
 
-    return p_values
+    return results
 end
 
 function _process_cell(x; pvalue = false)
@@ -98,7 +120,7 @@ end
 ####################################################################################################
 
 function fit_logit_models(
-        df::DataFrame, variables::AbstractVector{Symbol};
+        df::DataFrame, variables;
         phases = [
             "DepressionEarlyProdromal", "DepressionLateProdromal", "DepressionFirstWeek",
             "DepressionSecondWeek", "DepressionOngoingWeeks", "ManiaEarlyProdromal",
@@ -125,8 +147,12 @@ function fit_logit_models(
     )
 
     for (i, variable) in enumerate(variables)
+        if variable isa Symbol
+            variable = [variable]
+        end
+
         df_variable = @chain df_model begin
-            select(:Participant, :Phase, variable)
+            select(:Participant, :Phase, variable...)
             dropmissing
         end
 
@@ -136,7 +162,7 @@ function fit_logit_models(
                 transform(:Phase => (x -> x .== phase) => phase)
             end
 
-            formula = (term(phase) ~ term(1) + term(variable) +
+            formula = (term(phase) ~ term(1) + sum(term(x) for x in variable) +
                                      (term(1) | term(:Participant)))
 
             try
@@ -231,44 +257,62 @@ end
 function analyze_models(
         filename::AbstractString, models;
         adjustment = Holm(),
-        subsets = [[axes(models, 1), axes(models, 2)]],
+        p_values = _get_p_values(models),
+        subsets = [[axes(p_values, 1), axes(p_values, 2), k] for k in axes(p_values, 3)],
         variables = _predictors(models),
         header = ["", _outcomes(models)...],
-        odds_ratios = true
+        intercepts = false
 )
+    adjusted_p_values = _get_adjusted_p_values(_get_p_values(models), adjustment; subsets)
+    odds_ratios = _get_odds_ratios(models)
+    betas = _get_betas(models)
+
     if endswith(filename, ".pdf")
         save_tables(filename) do io
-            print_table(io, header, hcat(variables, _get_p_values(models)), true)
-            println(io, "\n: " * "p values" * "\n")
+            for i in axes(p_values, 3)
+                i == 1 && !intercepts && continue
 
-            print_table(io, header,
-                hcat(variables, _get_adjusted_p_values(models, adjustment, subsets)), true)
-            println(io, "\n: " * "Bonferroni-Holm adjusted p values" * "\n")
+                label = i == 1 ? " Intercepts " :
+                        size(p_values, 3) == 2 ? " " : " Betas $(i-1) "
 
-            if odds_ratios
-                print_table(io, header, hcat(variables, _get_odds_ratios(models)))
-                println(io, "\n: " * "Odds ratios" * "\n")
+                print_table(io, header, hcat(variables[i], p_values[:, :, i]), true)
+                println(io, "\n:" * label * "p values" * "\n")
+
+                print_table(
+                    io, header, hcat(variables[i], adjusted_p_values[:, :, i]), true)
+                println(io, "\n:" * label * "Bonferroni-Holm adjusted p values" * "\n")
+
+                if i != 1
+                    print_table(io, header, hcat(variables[i], odds_ratios[:, :, i]))
+                    println(io, "\n:" * label * "Odds ratios" * "\n")
+                end
+
+                print_table(io, header, hcat(variables[i], betas[:, :, i]))
+                println(io, "\n:" * label * "Coefficients" * "\n")
             end
-
-            print_table(io, header, hcat(variables, _get_betas(models)))
-            println(io, "\n: " * "Coefficients" * "\n")
         end
 
     elseif endswith(filename, ".csv")
-        save_table(filename[1:(end - 4)] * " (p values).csv", header,
-            hcat(variables, _get_p_values(models)), nothing, true)
+        for i in axes(p_values, 3)
+            i == 1 && !intercepts && continue
 
-        save_table(
-            filename[1:(end - 4)] * " (Bonferroni-Holm adjusted p values).csv", header,
-            hcat(variables, _get_adjusted_p_values(models, adjustment, subsets)),
-            nothing, true)
+            label = filename[1:(end - 4)] *
+                    (i == 1 ? " Intercepts " :
+                     size(p_values, 3) == 2 ? " " : " Betas $(i-1) ")
 
-        if odds_ratios
-            save_table(filename[1:(end - 4)] * " (Odds ratios).csv", header,
-                hcat(variables, _get_odds_ratios(models)), nothing)
+            save_table(label * "(p values).csv", header,
+                hcat(variables[i], p_values[:, :, i]), nothing, true)
+
+            save_table(label * "(Bonferroni-Holm adjusted p values).csv", header,
+                hcat(variables[i], adjusted_p_values[:, :, i]), nothing, true)
+
+            if i != 1
+                save_table(label * "(Odds ratios).csv", header,
+                    hcat(variables[i], odds_ratios[:, :, i]), nothing)
+            end
+
+            save_table(label * "(Coefficients).csv",
+                header, hcat(variables[i], betas[:, :, i]), nothing)
         end
-
-        save_table(filename[1:(end - 4)] * " (Coefficients).csv",
-            header, hcat(variables, _get_betas(models)), nothing)
     end
 end

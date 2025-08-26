@@ -14,7 +14,7 @@ export roc_curve, auc
 ####################################################################################################
 
 function _preprocess_roc(df::DataFrame, model)
-    variable = _predictor(model)
+    variable = _predictors(model)[2]
     phase = _outcome(model)
 
     df_roc = @chain df begin

@@ -210,7 +210,7 @@ end
 
 function draw_roc(df::DataFrame, model)
     false_positive_rates, true_positive_rates, _ = roc_curve(df, model)
-    variable = _predictor(model)
+    variable = _predictors(model)[2]
     outcome = _outcome(model)
 
     draw(
@@ -223,7 +223,7 @@ function draw_roc(df::DataFrame, model)
 end
 
 function draw_roc(dir::AbstractString, df::DataFrame, models)
-    variables = _predictors(models)
+    variables = _predictors(models)[2]
     phases = _outcomes(models)
 
     for (i, variable) in enumerate(variables)
