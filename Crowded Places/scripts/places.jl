@@ -53,7 +53,7 @@ function (;
         )
     end
 
-    @chain var"data#BipoSense Mobile Sensing" begin
+    df = @chain var"data#BipoSense Mobile Sensing" begin
         gather(MovisensXSLocation; callback = correct_timestamps)
         transform(:MovisensXSParticipantID => ByRow(x -> parse(Int, x)); renamecols = false)
         leftjoin(var"data#BipoSense Assignments"; on = :MovisensXSParticipantID)
@@ -131,7 +131,6 @@ function (;
         transform(:DateTime => ByRow(Date) => :Date)
         select(Not(:DateTime))
         leftjoin(var"data#BipoSense Ground Truth", _; on = [:Participant, :Date])
-        subset(:Participant => ByRow(!isequal(2869)))
         transform(
             :State => (x -> replace(x, "Hypomania" => "Mania", "Mixed" => missing));
             renamecols = false
@@ -153,12 +152,21 @@ function (;
                 (x -> x .- mean(skipmissing(x)));
             renamecols = false
         )
+    end
+
+    @chain df begin
+        subset(:Participant => ByRow(!isequal(2869)))
 
         statistical_process_control(
             [:MinutesRetailExposure, :MinutesRailwayExposure, :MinutesPedestrianExposure,
                 :MinutesMallExposure, :MinutesDepartmentStoreExposure, :MinutesCrowdExposure];
             λ, L
         )
-        dynamical_systems_theory(VARIABLES)
+
+        select(Not([:State, VARIABLES...]))
+
+        rightjoin(dynamical_systems_theory(df, VARIABLES); on = [:Participant, :Date])
+
+        sort([:Participant, :Date])
     end
 end
