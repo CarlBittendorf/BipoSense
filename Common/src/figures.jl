@@ -179,7 +179,11 @@ function draw_timeseries(df::DataFrame, variable::Symbol;
 )
     df_base = _make_base_dataframe(df, facet)
     df_poly = _make_polygon_dataframe(df_base, facet, variable, polygon_colors)
-    df_plot = dropmissing(df_base, variable)
+    df_plot = transform(
+        df_base,
+        variable => ByRow(x -> ismissing(x) ? NaN : x);
+        renamecols = false
+    )
 
     draw(
         mapping(; layout = facet => layout_sorter) * (
