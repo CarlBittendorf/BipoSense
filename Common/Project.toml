@@ -1,7 +1,7 @@
 name = "Common"
 uuid = "32073bc9-f332-4340-a5ee-de7f7a68734c"
-authors = ["Carl Bittendorf <carl.bittendorf@gmail.com> and contributors"]
 version = "0.0.1"
+authors = ["Carl Bittendorf <carl.bittendorf@gmail.com> and contributors"]
 
 [deps]
 AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
@@ -25,6 +25,9 @@ ShiftedArrays = "1277b4bf-5013-50f5-be3d-901d8477a67a"
 StatisticalMeasures = "a19d573c-0a75-4610-95b3-7071388c7541"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 StatsModels = "3eaba693-59b7-5ba5-a881-562e759f1c8d"
+
+[sources]
+AmbulatoryAssessmentAnalysis = {rev = "main", url = "https://github.com/CarlBittendorf/AmbulatoryAssessmentAnalysis.jl"}
 
 [compat]
 AlgebraOfGraphics = "0.11.3"

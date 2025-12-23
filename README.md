@@ -22,11 +22,13 @@ In addition, data is visualized in a variety of ways, especially as time series 
 
 Each project contains the following files and folders:
 
-* *Project.toml* and *Manifest.toml*: These two files list the required Julia packages, their dependencies and the versions used in this project.
+* *Project.toml*: Lists the required Julia packages.
 
 * *Data.toml*: This file, along with [DataToolkit.jl](https://github.com/tecosaur/DataToolkit.jl), is used to organize and manage our data and contains, among other things, descriptions, checksums and references to the code that was used to create the datasets.
 
 * *scripts*: Contains the specific code for processing data, fitting models, creating figures, and so on.
+
+Furthermore, the *Manifest.toml* file in the root directory of this repository contains the versions of the Julia packages used and their dependencies.
 
 ### Passive Sensing
 
@@ -56,4 +58,4 @@ It is assumed that people tend to stay at home more during a depressive episode,
 
 Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – GRK2739/1 – Project Nr. 447089431 – Research Training Group: KD²School – Designing Adaptive Systems for Economic Decisions
 
-Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – CRC393 – Project Nr. 521379614 – Trajectories of Affective Disorders: Cognitive-emotional Mechanisms of Symptom Change
+Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – CRC393 – Project Nr. 521379614 – Trajectories of Affective Disorders: Cognitive-Emotional Mechanisms of Symptom Change

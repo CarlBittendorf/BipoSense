@@ -1,0 +1,10 @@
+[workspace]
+projects = [
+    "Common",
+    "Passive Sensing",
+    "Critical Slowing Down",
+    "Unique Places",
+    "Crowded Places",
+    "Home Stay",
+    "Emotional Inertia"
+]
