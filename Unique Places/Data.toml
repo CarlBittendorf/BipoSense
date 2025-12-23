@@ -17,6 +17,28 @@ uuid = "8f92bdea-d8a3-4e47-8b65-a81cfca89a49"
     [["BipoSense Assignments".loader]]
     driver = "csv"
 
+[["BipoSense Dimensional Ratings"]]
+uuid = "ecdb0ef6-8764-4b54-8188-5839514b598f"
+
+    [["BipoSense Dimensional Ratings".storage]]
+    driver = "filesystem"
+    checksum = "k12:befe333b29afdae9970db435b8f9698f"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Dimensional Ratings.csv"
+
+    [["BipoSense Dimensional Ratings".loader]]
+    driver = "csv"
+
+[["BipoSense Forms"]]
+uuid = "435fd827-3b9c-4d2b-b5ac-b0a88281540b"
+
+    [["BipoSense Forms".storage]]
+    driver = "filesystem"
+    checksum = "k12:e4e50ae0d228c033efdf46b20738f0f1"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Forms.arrow"
+
+    [["BipoSense Forms".loader]]
+    driver = "arrow"
+
 [["BipoSense Ground Truth"]]
 uuid = "bec18cbb-c699-4718-99aa-6b0250db7295"
 
