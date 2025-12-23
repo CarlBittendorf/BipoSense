@@ -83,7 +83,7 @@ _get_p_values(model) = ismissing(model) ? [] : _p_values(model)
 _get_p_values(models::Matrix) = _to_matrix(map(_get_p_values, models))
 
 function _get_adjusted_p_values(
-        p_values, adjustment;
+        p_values, adjustment = Holm();
         subsets = [[axes(p_values, 1), axes(p_values, 2), k] for k in axes(p_values, 3)]
 )
     results = copy(p_values)
@@ -207,26 +207,29 @@ function save_tables(print_tables::Function, filename::AbstractString)
         quartofile = joinpath(tmp, "Tables.qmd")
 
         open(quartofile, "w") do io
-            println(io, raw"""
-            ---
-            papersize: A4
-            geometry:
-                - left=10mm
-                - right=10mm
-                - top=10mm
-                - bottom=10mm
-            include-in-header:
-                text: |
-                    \usepackage{lscape}
-                    \newcommand{\blandscape}{\begin{landscape}}
-                    \newcommand{\elandscape}{\end{landscape}}
-                    \renewcommand\arraystretch{1.5}
-            ---
+            println(
+                io,
+                raw"""
+    ---
+    papersize: A4
+    geometry:
+        - left=10mm
+        - right=10mm
+        - top=10mm
+        - bottom=10mm
+    include-in-header:
+        text: |
+            \usepackage{lscape}
+            \newcommand{\blandscape}{\begin{landscape}}
+            \newcommand{\elandscape}{\end{landscape}}
+            \renewcommand\arraystretch{1.5}
+    ---
 
-            \footnotesize
+    \footnotesize
 
-            \blandscape
-            """)
+    \blandscape
+    """
+            )
 
             print_tables(io)
 
