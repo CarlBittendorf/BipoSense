@@ -54,6 +54,10 @@ Changes in preferred environments or spatial routines are core symptoms of bipol
 
 It is assumed that people tend to stay at home more during a depressive episode, while the opposite trend is observed during a manic episode. Therefore, we examine whether time spent at home and mean and maximum distances from home (both throughout the day and specifically at night) can serve as early warning signals.
 
+### Emotional Inertia
+
+Using autocorrelations and means, we investigate whether it is possible to differentiate affective episodes based on their inertia, i.e., how stable behavior or experience remains over time, using passively sensed smartphone parameters.
+
 ## Acknowledgements
 
 Funded by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) – GRK2739/1 – Project Nr. 447089431 – Research Training Group: KD²School – Designing Adaptive Systems for Economic Decisions

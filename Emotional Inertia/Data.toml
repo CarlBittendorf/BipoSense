@@ -1,0 +1,87 @@
+data_config_version = 0
+uuid = "9c5e9c53-598b-4a68-b838-a8877bf3ecb0"
+name = "Emotional Inertia"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "1405ebf7-5025-4b17-b927-aca4a4ce48af"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Dimensional Ratings"]]
+uuid = "148041d4-15e3-4e38-ac14-6d021141d500"
+
+    [["BipoSense Dimensional Ratings".storage]]
+    driver = "filesystem"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Dimensional Ratings.csv"
+
+    [["BipoSense Dimensional Ratings".loader]]
+    driver = "csv"
+
+[["BipoSense Emotional Inertia"]]
+uuid = "62b6c150-1837-4208-9529-d6f5743fb037"
+
+    [["BipoSense Emotional Inertia".loader]]
+    driver = "julia"
+    path = "scripts/inertia.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Emotional Inertia".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Latent Variables" = "📇DATASET<<BipoSense Latent Variables::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+        "data#BipoSense Sleep Variables" = "📇DATASET<<BipoSense Sleep Variables::DataFrames.DataFrame>>"
+
+[["BipoSense Ground Truth"]]
+uuid = "04cc064e-d326-47e1-b015-81584bfb148e"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Latent Variables"]]
+uuid = "38a39826-4de5-4198-bb41-2312606d0e3f"
+
+    [["BipoSense Latent Variables".storage]]
+    driver = "filesystem"
+    checksum = "k12:1852887ff813818ea9abecdaf2d5c032"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Latent Variables.csv"
+
+    [["BipoSense Latent Variables".loader]]
+    driver = "csv"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "2454d3c8-3554-478f-bfb5-74868197e2b3"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["BipoSense Sleep Variables"]]
+uuid = "5acca446-0c0e-481b-9e1d-b467ea1c662a"
+
+    [["BipoSense Sleep Variables".storage]]
+    driver = "filesystem"
+    checksum = "k12:2f7a763eed7a743358d9e7062b21c11b"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Sleep Variables.csv"
+
+    [["BipoSense Sleep Variables".loader]]
+    driver = "csv"
