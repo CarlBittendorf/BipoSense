@@ -52,7 +52,7 @@ function load_geometries(filename)
                     return PolyArea(x)
                 elseif x isa Rope
                     return buffer_rope(x, 10)
-                elseif x isa Point
+                elseif x isa GeoStats.Point
                     return buffer_point(x, 50)
                 else
                     return x
@@ -69,7 +69,7 @@ function iswithin(box, point)
 end
 
 function isexposed(points, polygons)
-    boxes = boundingbox.(polygons)
+    boxes = GeoStats.boundingbox.(polygons)
     hits = map(x -> findall(box -> iswithin(box, x), boxes), points)
 
     return map((point, indices) -> any(polygon -> point in polygon, polygons[indices]),

@@ -69,7 +69,7 @@ function (;
         => [:Latitude, :Longitude])
         transform([:Latitude, :Longitude] => ByRow(project(EPSG{3035}))
         => [:EPSG3035Longitude, :EPSG3035Latitude])
-        transform([:EPSG3035Longitude, :EPSG3035Latitude] => ByRow(Point) => :Point)
+        transform([:EPSG3035Longitude, :EPSG3035Latitude] => ByRow(GeoStats.Point) => :Point)
 
         # OpenStreetMap
         transform(
