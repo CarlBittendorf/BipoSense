@@ -27,11 +27,11 @@ function _filter_timestamps(timestamps, start)
 
     previous = start
 
-    # ...and then all for which there is at least one previous entry that is at least as old
+    # ...and then all for which there is at least one previous entry that is older
     for (index, timestamp) in enumerate(timestamps)
         !keep[index] && continue
 
-        if timestamp <= previous
+        if timestamp < previous
             keep[index] = false
         else
             previous = timestamp
