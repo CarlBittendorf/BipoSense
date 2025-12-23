@@ -22,10 +22,16 @@ function (;
 
     distance(x, y, u, v) = haversine([x, y], [u, v])
 
-    names_avg7 = add_suffixes(VARIABLES, ["AVG7"])
-    names_var = add_suffixes(VARIABLES, ["VAR"])
+    # only use days where at least 1/3 of the minutes are not missing
+    function filter_missing(f, x)
+        if mean(ismissing.(x)) < 1 / 3
+            return f(skipmissing(x))
+        else
+            return missing
+        end
+    end
 
-    @chain var"data#BipoSense Mobile Sensing" begin
+    df = @chain var"data#BipoSense Mobile Sensing" begin
         gather(MovisensXSLocation; callback = correct_timestamps)
         transform(:MovisensXSParticipantID => ByRow(x -> parse(Int, x)); renamecols = false)
         leftjoin(var"data#BipoSense Assignments"; on = :MovisensXSParticipantID)
@@ -35,27 +41,42 @@ function (;
         filter_locations(; max_velocity, groupcols = [:Participant])
 
         # fill missing timestamps
-        select(:Participant, :DateTime, :Latitude, :Longitude)
+        select(:Participant, :DateTime, :Latitude, :Longitude, :LocationConfidence)
         fill_periods(Day(1), Minute(1); groupcols = [:Participant])
         groupby(:Participant)
-        transform([:Latitude, :Longitude] .=> fill_down; renamecols = false)
+        transform(
+            [:Latitude, :Longitude, :LocationConfidence] .=> fill_down;
+            renamecols = false
+        )
 
         leftjoin(df_home; on = :Participant)
         dropmissing([:HomeLatitude, :HomeLongitude])
         transform(
             [:Latitude, :Longitude, :HomeLatitude, :HomeLongitude] => ByRow(distance) => :Distance,
+            :LocationConfidence => ByRow(x -> x <= 0 ? 0.0 : x) => :LocationConfidence,
             :DateTime => ByRow(Time) => :Time
+        )
+
+        # remove points where its unclear if they are at home or not due to poor accuracy
+        transform(
+            [:Distance, :LocationConfidence] => ByRow((d, c) -> (d <= radius || c <= 100 ||
+                                                                 d > c + radius) ? [d, c] :
+                                                                [missing missing]);
+            renamecols = false
         )
 
         groupby_period(Day(1); groupcols = [:Participant])
         combine(
-            :Distance => mean => :MeanDistanceFromHome,
-            :Distance => maximum => :MaxDistanceFromHome,
-            :Distance => (x -> mean(x .<= radius)) => :FractionAtHome,
-            [:Distance, :Time] => ((x, t) -> mean(filter_day(x, t) .<= radius)) => :FractionAtHomeDay,
-            [:Distance, :Time] => ((x, t) -> mean(filter_night(x, t))) => :MeanDistanceFromHomeNight,
-            [:Distance, :Time] => ((x, t) -> maximum(filter_night(x, t))) => :MaxDistanceFromHomeNight,
-            [:Distance, :Time] => ((x, t) -> mean(filter_night(x, t) .<= radius)) => :FractionAtHomeNight
+            :Distance => (x -> filter_missing(mean, x)) => :MeanDistanceFromHome,
+            :Distance => (x -> filter_missing(maximum, x)) => :MaxDistanceFromHome,
+            :Distance => (x -> filter_missing(mean, x .<= radius)) => :FractionAtHome,
+            [:Distance, :Time] => ((x, t) -> filter_missing(mean, filter_day(x, t))) => :MeanDistanceFromHomeDay,
+            [:Distance, :Time] => ((x, t) -> filter_missing(maximum, filter_day(x, t))) => :MaxDistanceFromHomeDay,
+            [:Distance, :Time] => ((x, t) -> filter_missing(mean, filter_day(x, t) .<= radius)) => :FractionAtHomeDay,
+            [:Distance, :Time] => ((x, t) -> filter_missing(mean, filter_night(x, t))) => :MeanDistanceFromHomeNight,
+            [:Distance, :Time] => ((x, t) -> filter_missing(maximum, filter_night(x, t))) => :MaxDistanceFromHomeNight,
+            [:Distance, :Time] => ((x, t) -> filter_missing(mean, filter_night(x, t) .<= radius)) => :FractionAtHomeNight,
+            :LocationConfidence => (x -> filter_missing(median, x)) => :MedianLocationConfidence
         )
         transform(
             [:MeanDistanceFromHome, :MaxDistanceFromHome,
@@ -67,18 +88,34 @@ function (;
         transform(:DateTime => ByRow(Date) => :Date)
         select(Not(:DateTime))
         leftjoin(var"data#BipoSense Ground Truth", _; on = [:Participant, :Date])
-        subset(:Participant => ByRow(x -> !(x in [2869, 4289])))
+        subset(:Participant => ByRow(!isequal(4289)))
         transform(
             :State => (x -> replace(x, "Hypomania" => "Mania", "Mixed" => missing));
             renamecols = false
         )
         sort([:Participant, :Date])
+    end
 
-        statistical_process_control(VARIABLES; λ, L)
+    names_avg7 = add_suffixes(VARIABLES, ["AVG7"])
+    names_var = add_suffixes(VARIABLES, ["VAR"])
+
+    df_dst = @chain df begin
         dynamical_systems_theory(VARIABLES)
         transform(
             VARIABLES .=> (x -> rolling(mean, x; n = 7, min_n = 4)) .=> names_avg7,
             VARIABLES .=> (x -> rolling(var, x; n = 14, min_n = 7)) .=> names_var
         )
+    end
+
+    @chain df begin
+        subset(:Participant => ByRow(!isequal(2869)))
+
+        statistical_process_control(VARIABLES; λ, L)
+
+        select(Not([:State, :MedianLocationConfidence, VARIABLES...]))
+
+        rightjoin(df_dst; on = [:Participant, :Date])
+
+        sort([:Participant, :Date])
     end
 end
