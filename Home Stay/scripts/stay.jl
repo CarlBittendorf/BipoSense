@@ -80,6 +80,7 @@ function (;
         )
         transform(
             [:MeanDistanceFromHome, :MaxDistanceFromHome,
+                :MeanDistanceFromHomeDay, :MaxDistanceFromHomeDay,
                 :MeanDistanceFromHomeNight, :MaxDistanceFromHomeNight] .=> (x -> x ./ 1000),
             [:FractionAtHome, :FractionAtHomeDay, :FractionAtHomeNight] .=> (x -> x .* 100);
             renamecols = false
