@@ -108,13 +108,6 @@ function _get_adjusted_p_values(
     return results
 end
 
-function _process_cell(x; pvalue = false)
-    (ismissing(x) || !isfinite(x)) && return Cell("")
-    pvalue && x < 0.001 && return Cell("<0.001"; bold = true)
-
-    return Cell(string(round(x; digits = 3)); bold = pvalue && x < 0.05)
-end
-
 ####################################################################################################
 # IMPLEMENTATIONS
 ####################################################################################################
