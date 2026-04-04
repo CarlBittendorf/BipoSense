@@ -4,9 +4,7 @@ function (;
         var"data#BipoSense Residential Locations",
         var"data#BipoSense Ground Truth",
         max_velocity = 300,
-        radius = 100,
-        λ = 0.15,
-        L = 2.536435
+        radius = 100
 )
     df_home = rename(
         var"data#BipoSense Residential Locations",
@@ -31,7 +29,10 @@ function (;
         end
     end
 
-    df = @chain var"data#BipoSense Mobile Sensing" begin
+    names_avg7 = add_suffixes(VARIABLES, ["AVG7"])
+    names_var = add_suffixes(VARIABLES, ["VAR"])
+
+    @chain var"data#BipoSense Mobile Sensing" begin
         gather(MovisensXSLocation; callback = correct_timestamps)
         transform(:MovisensXSParticipantID => ByRow(x -> parse(Int, x)); renamecols = false)
         leftjoin(var"data#BipoSense Assignments"; on = :MovisensXSParticipantID)
@@ -88,35 +89,18 @@ function (;
 
         transform(:DateTime => ByRow(Date) => :Date)
         select(Not(:DateTime))
-        leftjoin(var"data#BipoSense Ground Truth", _; on = [:Participant, :Date])
+        rightjoin(var"data#BipoSense Ground Truth"; on = [:Participant, :Date])
         subset(:Participant => ByRow(!isequal(4289)))
         transform(
             :State => (x -> replace(x, "Hypomania" => "Mania", "Mixed" => missing));
             renamecols = false
         )
         sort([:Participant, :Date])
-    end
 
-    names_avg7 = add_suffixes(VARIABLES, ["AVG7"])
-    names_var = add_suffixes(VARIABLES, ["VAR"])
-
-    df_dst = @chain df begin
         dynamical_systems_theory(VARIABLES)
         transform(
             VARIABLES .=> (x -> rolling(mean, x; n = 7, min_n = 4)) .=> names_avg7,
             VARIABLES .=> (x -> rolling(var, x; n = 14, min_n = 7)) .=> names_var
         )
-    end
-
-    @chain df begin
-        subset(:Participant => ByRow(!isequal(2869)))
-
-        statistical_process_control(VARIABLES; λ, L)
-
-        select(Not([:State, :MedianLocationConfidence, VARIABLES...]))
-
-        rightjoin(df_dst; on = [:Participant, :Date])
-
-        sort([:Participant, :Date])
     end
 end
