@@ -212,6 +212,15 @@ function draw_timeseries(dir::AbstractString, df::DataFrame, variables::Vector{S
     end
 end
 
+function draw_timeseries(dir::AbstractString, df::DataFrame, participant, variable::Symbol)
+    df_participant = subset(df, :Participant => ByRow(isequal(participant)))
+
+    figure = draw_timeseries(df_participant, variable; layout = [(1, 1)])
+
+    save(joinpath(dir, string(variable) * "Timeseries " * string(participant) * ".png"),
+        figure; px_per_unit = 3)
+end
+
 function draw_roc(df::DataFrame, model)
     false_positive_rates, true_positive_rates, _ = roc_curve(df, model)
     variable = _predictors(model)[2]
