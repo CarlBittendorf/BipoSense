@@ -7,7 +7,7 @@ set_aog_theme!()
 df = d"BipoSense Home Stay"
 
 draw_timeseries(
-    "figures/timeseries", df, add_suffixes(VARIABLES, ["AR", "LNVAR", "AVG", "AVG7"]))
+    "figures/timeseries", df, add_suffixes(VARIABLES, ["AR", "LNVAR", "AVG"]))
 
 draw_timeseries("figures/timeseries", df, [:MedianLocationConfidence])
 

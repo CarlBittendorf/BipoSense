@@ -24,6 +24,39 @@ subsets = [[1:9, 1:5], [1:9, 6:9], [10:18, 1:5], [10:18, 6:9], [19:27, 1:5], [19
 analyze_models("models/Models.pdf", models; subsets, header)
 analyze_models("models/Models.csv", models; subsets, header)
 
+phases = [
+    "DepressionEarlyProdromal", "DepressionLateProdromal", "DepressionFirstWeek",
+    "DepressionSecondWeek", "DepressionOngoingWeeks", "ManiaEarlyProdromal",
+    "ManiaLateProdromal", "ManiaFirstWeek", "ManiaSecondWeek"
+]
+
+for (i, variable) in enumerate(variables)
+    for (j, phase) in enumerate(phases)
+        if !ismissing(models[i, j])
+            false_positive_rates, true_positive_rates, _ = roc_curve(df, models[i, j])
+
+            figure = draw(
+                data((; Polygon = [rectangle(0, 0.05, 0.5, 1)])) * mapping(:Polygon) *
+                visual(Poly; color = (GREEN, 0.2)) +
+                mapping(
+                    false_positive_rates => "False Positive Rate",
+                    true_positive_rates => "True Positive Rate"
+                ) * visual(Lines);
+                axis = (; title = string(variable) * " (" * phase * ")")
+            )
+
+            filename = joinpath(
+                "figures/roc", string(variable) * " (" * string(phase) * ")" * ".png")
+
+            save(filename, figure; px_per_unit = 3)
+        end
+    end
+end
+
+aucs = map(x -> ismissing(x) ? x : auc(df, x), models)
+
+save_table("models/Models AUC.pdf", header, hcat(variables, aucs), "AUCs")
+
 models = vcat((
     fit_logit_models(subset(df, variable => ByRow(!isequal(0))), [variable])
 for variable in [:FractionAtHomeAVG, :FractionAtHomeDayAVG, :FractionAtHomeNightAVG]
