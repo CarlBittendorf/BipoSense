@@ -78,6 +78,20 @@ _get_odds_ratios(model) = ismissing(model) ? [] : [missing, exp.(coef(model)[2:e
 
 _get_odds_ratios(models::Matrix) = _to_matrix(map(_get_odds_ratios, models))
 
+function _get_lower_limits(model)
+    ismissing(model) ? [] :
+    [missing, exp.(coef(model)[2:end] - 1.96 * stderror(model)[2:end])...]
+end
+
+_get_lower_limits(models::Matrix) = _to_matrix(map(_get_lower_limits, models))
+
+function _get_upper_limits(model)
+    ismissing(model) ? [] :
+    [missing, exp.(coef(model)[2:end] + 1.96 * stderror(model)[2:end])...]
+end
+
+_get_upper_limits(models::Matrix) = _to_matrix(map(_get_upper_limits, models))
+
 _get_p_values(model) = ismissing(model) ? [] : _p_values(model)
 
 _get_p_values(models::Matrix) = _to_matrix(map(_get_p_values, models))
@@ -155,8 +169,9 @@ function fit_logit_models(
                 transform(:Phase => (x -> x .== phase) => phase)
             end
 
-            formula = (term(phase) ~ term(1) + sum(term(x) for x in variable) +
-                                     (term(1) | term(:Participant)))
+            formula = (term(phase) ~
+                       term(1) + sum(term(x) for x in variable) +
+                       (term(1) | term(:Participant)))
 
             try
                 models[i, j] = fit(MixedModel, formula, df_phase, Bernoulli())
@@ -182,8 +197,10 @@ function print_table(io::IO, header, cells, pvalues = false)
     data = process_cell.(cells; pvalue = pvalues)
 
     p_value_highlighter = MarkdownHighlighter(
-        (data, i, j) -> pvalues && (j != 1) && data[i, j] != "" &&
-                            (data[i, j] == "<0.001" || parse(Float64, data[i, j]) < 0.05),
+        (data,
+            i,
+            j) -> pvalues && (j != 1) && data[i, j] != "" &&
+                  (data[i, j] == "<0.001" || parse(Float64, data[i, j]) < 0.05),
         MarkdownDecoration(; bold = true)
     )
 
@@ -261,6 +278,8 @@ function analyze_models(
 )
     adjusted_p_values = _get_adjusted_p_values(_get_p_values(models), adjustment; subsets)
     odds_ratios = _get_odds_ratios(models)
+    lower_limits = _get_lower_limits(models)
+    upper_limits = _get_upper_limits(models)
     betas = _get_betas(models)
 
     if endswith(filename, ".pdf")
@@ -281,6 +300,12 @@ function analyze_models(
                 if i != 1
                     print_table(io, header, hcat(variables[i], odds_ratios[:, :, i]))
                     println(io, "\n:" * label * "Odds ratios" * "\n")
+
+                    print_table(io, header, hcat(variables[i], lower_limits[:, :, i]))
+                    println(io, "\n:" * label * "Lower limits odds ratios" * "\n")
+
+                    print_table(io, header, hcat(variables[i], upper_limits[:, :, i]))
+                    println(io, "\n:" * label * "Upper limits odds ratios" * "\n")
                 end
 
                 print_table(io, header, hcat(variables[i], betas[:, :, i]))
@@ -305,6 +330,12 @@ function analyze_models(
             if i != 1
                 save_table(label * "(Odds ratios).csv", header,
                     hcat(variables[i], odds_ratios[:, :, i]), nothing)
+
+                save_table(label * "(Lower limits odds ratios).csv", header,
+                    hcat(variables[i], lower_limits[:, :, i]), nothing)
+
+                save_table(label * "(Upper limits odds ratios).csv", header,
+                    hcat(variables[i], upper_limits[:, :, i]), nothing)
             end
 
             save_table(label * "(Coefficients).csv",
