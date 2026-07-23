@@ -6,5 +6,10 @@ projects = [
     "Unique Places",
     "Crowded Places",
     "Home Stay",
-    "Emotional Inertia"
+    "Emotional Inertia",
+    "Weather",
+    "Dimensional",
+    "Hidden Markov",
+    "Sleep",
+    "Circadian Rhythm"
 ]
