@@ -1,0 +1,89 @@
+data_config_version = 0
+uuid = "8a1821dd-ce20-4e82-aecf-eb2c567a8240"
+name = "Hidden Markov"
+plugins = ["store", "defaults", "memorise"]
+
+[config.defaults.storage._]
+checksum = "auto"
+
+[["BipoSense Assignments"]]
+uuid = "fb40b4b8-3569-48ea-80f8-11be61ef9293"
+
+    [["BipoSense Assignments".storage]]
+    driver = "filesystem"
+    checksum = "k12:cd86538708f51e3abb9bc229938b620d"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Assignments.csv"
+
+    [["BipoSense Assignments".loader]]
+    driver = "csv"
+
+[["BipoSense Dimensional Ratings"]]
+uuid = "33fcea56-62e5-45d3-aec4-cc3bb75cf5a5"
+
+    [["BipoSense Dimensional Ratings".storage]]
+    driver = "filesystem"
+    checksum = "k12:befe333b29afdae9970db435b8f9698f"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Dimensional Ratings.csv"
+
+    [["BipoSense Dimensional Ratings".loader]]
+    driver = "csv"
+
+[["BipoSense Forms"]]
+uuid = "193f30ed-cfee-4f7d-a7e9-380ac09af15f"
+
+    [["BipoSense Forms".storage]]
+    driver = "filesystem"
+    checksum = "k12:e4e50ae0d228c033efdf46b20738f0f1"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Forms.arrow"
+
+    [["BipoSense Forms".loader]]
+    driver = "arrow"
+
+[["BipoSense Ground Truth"]]
+uuid = "96f3980a-3d52-44f6-9edb-88808aa9d0c6"
+
+    [["BipoSense Ground Truth".storage]]
+    driver = "filesystem"
+    checksum = "k12:ea4aa4c0385da725e95369b4bcfafb48"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Ground Truth.csv"
+
+    [["BipoSense Ground Truth".loader]]
+    driver = "csv"
+
+[["BipoSense Hidden Markov"]]
+uuid = "2dffb79c-601a-44a4-909a-a4a8a8fd0762"
+
+    [["BipoSense Hidden Markov".loader]]
+    driver = "julia"
+    path = "scripts/markov.jl"
+    type = "DataFrames.DataFrame"
+
+        ["BipoSense Hidden Markov".loader.arguments]
+        "data#BipoSense Assignments" = "📇DATASET<<BipoSense Assignments::DataFrames.DataFrame>>"
+        "data#BipoSense Dimensional Ratings" = "📇DATASET<<BipoSense Dimensional Ratings::DataFrames.DataFrame>>"
+        "data#BipoSense Forms" = "📇DATASET<<BipoSense Forms::DataFrames.DataFrame>>"
+        "data#BipoSense Ground Truth" = "📇DATASET<<BipoSense Ground Truth::DataFrames.DataFrame>>"
+        "data#BipoSense Mobile Sensing" = "📇DATASET<<BipoSense Mobile Sensing::Dict{String,IO}>>"
+        "data#BipoSense Residential Locations" = "📇DATASET<<BipoSense Residential Locations::DataFrames.DataFrame>>"
+
+[["BipoSense Mobile Sensing"]]
+uuid = "3d722213-0f26-48f7-9748-8304302e2f0d"
+
+    [["BipoSense Mobile Sensing".storage]]
+    driver = "filesystem"
+    checksum = "k12:32927fdb0bcb03dcf5dd59930ddf2c8c"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/raw/BipoSense Mobile Sensing.zip"
+
+    [["BipoSense Mobile Sensing".loader]]
+    driver = "zip"
+
+[["BipoSense Residential Locations"]]
+uuid = "e07c589d-a821-4821-8fdc-5c3ba10d362b"
+
+    [["BipoSense Residential Locations".storage]]
+    driver = "filesystem"
+    checksum = "k12:368e8288bdce407925df36066e579c2a"
+    path = "/Users/carlbittendorf/Documents/Projects/AmbulatoryAssessmentDatasets/BipoSense/clean/BipoSense Residential Locations.csv"
+
+    [["BipoSense Residential Locations".loader]]
+    driver = "csv"
